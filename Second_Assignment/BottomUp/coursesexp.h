@@ -2,9 +2,9 @@
 #define EXPRESSION
 
 enum token {
+     NUM = 300,
      NAME = 301,
      CREDITS = 302,
-     NUM = 300, 
      DEGREE = 303,
      SCHOOL = 304,
      ELECTIVE = 305,
@@ -18,7 +18,7 @@ union _lexVal{
      double credits;
 };
 
-extern union _lexVal lexicalValue;
+extern union _lexVal yylval;
 
 void errorMsg(const char *s);
 
