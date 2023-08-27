@@ -1,8 +1,0 @@
-3 +  (4 * 5)
-
-
-// NUM  ADDOP  '('  NUM   MULOP NUM  ')'   ---  type of token
-
-// 3      PLUS       4      MUL   5   -- (semantic values)
-
-
