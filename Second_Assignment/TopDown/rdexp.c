@@ -1,8 +1,8 @@
 /* 
-    This is an example of a recursive descent parser that handles arithmetic expressions.
+    This is an example of a recursive descent parser that handles arithmetic inputs.
     
-    This program reads an expression from the input and writes the value
-    of the expression to the standard output.
+    This program reads an input from the input and writes the value
+    of the input to the standard output.
           
     example input:  3 + 4 * 5 ^ 2    (^ is exponentiation operator)
 
@@ -26,8 +26,8 @@
   Here is a grammar describing the input
   (tokens are written using uppercase letters or as letters surrounded by quote marks):
   
-    expression -> expression ADDOP term | term 
-    term -> term MULOP factor | factor
+    input -> input ADDOP course_list | course_list 
+    course_list -> course_list MULOP factor | factor
     factor -> p POWER factor | p
     p -> '(' exp ')' | NUM
     
@@ -35,8 +35,8 @@
     
     
     Note that this grammar is not LL(1) because of the left recursion
-    in the productions for expression and term. It is not hard to find an equivalent LL(1) grammar
-    but this was not necessary. See the functions exp() and term().
+    in the productions for input and course_list. It is not hard to find an equivalent LL(1) grammar
+    but this was not necessary. See the functions exp() and course_list().
 
 */
 #include <stdio.h>
@@ -53,10 +53,13 @@ extern enum token yylex (void);
 
 // the recursive descent parser
 int lookahead;
+int num_elective_courses;
+double total_credits;
+int atleast_3_credits;
 
 void parse();
-int expression();
-int term();
+int input();
+int course_list();
 int factor();
 int p();
 
@@ -79,68 +82,67 @@ void match(int expectedToken)
 void parse()
 {
     lookahead = yylex();
-    int value = expression();
+    input(); // input
     if (lookahead != 0) {  // 0 means EOF
         errorMsg("EOF expected");
         exit(1);
     }
-    printf("value is %d\n", value);
 }
 
-int elective() // an expression is a sequence of terms seperated by ADDOPs
+// input: COURSES course_list;
+int input() 
 {
-    int value = term();
-    while (lookahead == ADDOP) {
-        enum op op = lexicalValue.op;
-        match(ADDOP);
-        int v = term();
-        value = (op == PLUS)? value + v : value - v;        
+    char* value;
+    if (lookahead == COURSES) {
+        value = course_list();
     }
-    RETURN("expression", value);
+    printf("There are %d elective courses\n", value);
+    RETURN("input", value);
         
 }
 
-int term() // a term is a sequence of factors seperated by MULOPs
-{
-    int value = factor();
-    while (lookahead == MULOP) {
-        enum op op = lexicalValue.op;
-        match(MULOP);
-        int v = factor();
-        value = (op == MUL)? value * v : value / v;        
-    }
-    RETURN("term", value);
+int course_list() // a course_list is a sequence of factors seperated by MULOPs
+{ 
+   while(lookahead != 0) {
+              
+   } 
 }
 
-int factor() /* note that POWER is right associative */
-{
-    int base = p();
-    if (lookahead == POWER) {
-        match(POWER);
-        int exponent = factor();
-        RETURN("factor", power(base, exponent));
-    }
-    RETURN("factor", base);
-}
-
-int p() 
+int course() 
 {
     int value;
+    double credits;
+
     switch (lookahead) {
-        case '(':  match('('); 
-                   value = expression();
-                   match(')');
-                   break;
-        case NUM:  value = lexicalValue.ival; match(NUM); break;
-        
-        default:   { char e[100]; 
-                     sprintf(e, "error: expected number or left parenthesis, found token %s", 
-                           token_name(lookahead));
-                     errorMsg(e);
-                     exit(1);
-                   }
+        case NUM: 
+            match(NUM); 
+            break;
+        case NAME: 
+            match(NAME); 
+            break; 
+        case CREDITS:  
+            credits = lexicalValue.credits; 
+            match(CREDITS); 
+            break;
+        case DEGREE:  
+            value = lexicalValue.lexeme; 
+            match(DEGREE); 
+            break;
+        case ELECTIVE:
+            total_credits += credits;
+            if (credits > 3.0) atleast_3_credits++;
+        default:   
+            break;
     }
-    RETURN("p", value);    
+    return value;  
+}
+
+int elective() // an input is a sequence of course_lists seperated by ADDOPs
+{
+    if(match(ELECTIVE)) {
+        return 1;
+    }
+    return 0;       
 }
 
 int main (int argc, char **argv)
