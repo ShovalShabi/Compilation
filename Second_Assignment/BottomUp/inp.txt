@@ -1,0 +1,5 @@
+<courses>
+10006 "Intro to CompSci" 5.5 B.Sc. Software
+10117 "Data Structures" 5 B.Sc. Software
+40120 "Databases" 3.5 B.Sc. Management Elective
+60165 "Autonomous vehicles" M.Sc. Mechanical elective
