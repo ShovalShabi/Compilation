@@ -57,6 +57,8 @@ int num_elective_courses;
 double total_credits;
 int atleast_3_credits;
 
+char* courses[200];
+
 void parse();
 int input();
 int course_list();
@@ -90,59 +92,63 @@ void parse()
 }
 
 // input: COURSES course_list;
-int input() 
+void input() 
 {
-    char* value;
     if (lookahead == COURSES) {
-        value = course_list();
-    }
-    printf("There are %d elective courses\n", value);
-    RETURN("input", value);
-        
+        match(COURSES);
+        course_list(); 
+    }  
 }
 
-int course_list() // a course_list is a sequence of factors seperated by MULOPs
-{ 
-   while(lookahead != 0) {
-              
-   } 
+//course_list: course_list course | %empty;
+
+void course_list() // a course_list is a sequence of factors seperated by MULOPs
+{    
+    if (lookahead != 0) {
+        course();
+        course_list();            
+    }   
 }
 
 int course() 
 {
-    int value;
-    double credits;
-
-    switch (lookahead) {
-        case NUM: 
-            match(NUM); 
-            break;
-        case NAME: 
-            match(NAME); 
-            break; 
-        case CREDITS:  
-            credits = lexicalValue.credits; 
-            match(CREDITS); 
-            break;
-        case DEGREE:  
-            value = lexicalValue.lexeme; 
-            match(DEGREE); 
-            break;
-        case ELECTIVE:
-            total_credits += credits;
-            if (credits > 3.0) atleast_3_credits++;
-        default:   
-            break;
+    char course[200];
+    int value = 0;
+    double credits = 0;
+    while(lookahead != 0) {
+        switch (lookahead) {
+            case NUM: 
+                match(NUM); 
+                break;
+            case NAME: 
+                match(NAME); 
+                break; 
+            case CREDITS:  
+                credits = lexicalValue.credits; 
+                match(CREDITS); 
+                break;
+            case DEGREE:  
+                value = lexicalValue.lexeme; 
+                match(DEGREE); 
+                break;
+            case ELECTIVE:           
+                if(elective()) {
+                    value = lexicalValue.lexeme; 
+                }
+                break;
+            default:   
+                break;
+        }
     }
     return value;  
 }
 
-int elective() // an input is a sequence of course_lists seperated by ADDOPs
-{
-    if(match(ELECTIVE)) {
-        return 1;
+int elective() {
+    if (lookahead == ELECTIVE) {
+        match(ELECTIVE);
+        preturn 1
     }
-    return 0;       
+    return 0
 }
 
 int main (int argc, char **argv)
