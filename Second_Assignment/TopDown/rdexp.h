@@ -1,29 +1,25 @@
 #ifndef EXPRESSION
 #define EXPRESSION
 
-// yylex returns 0 when EOF is encountered
 enum token {
-     LEFT_PAR = '(',
-     RIGHT_PAR = ')',
+     NAME = 301,
+     CREDITS = 302,
      NUM = 300, 
-     ADDOP,
-     MULOP,
-     POWER
+     DEGREE = 303,
+     SCHOOL = 304,
+     ELECTIVE = 305,
+     COURSES = 306
 };
 
 char *token_name(enum token token);
 
-enum op { PLUS, MINUS, MUL, DIV };
-
 union _lexVal{
-     int ival;
-     enum op op;
+     char lexeme[100];
+     double credits;
 };
 
 extern union _lexVal lexicalValue;
 
 void errorMsg(const char *s);
-
-int power(int base, unsigned int exp);
 
 #endif

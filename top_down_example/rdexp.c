@@ -40,7 +40,7 @@
 
 */
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>  /* for exit() */
 #include "rdexp.h"
 
 #ifdef DEBUG
@@ -62,9 +62,9 @@ int p();
 
 void match(int expectedToken)
 {
-    #ifdef DEBUG
+#ifdef DEBUG
     fprintf(stderr, "calling match %d (token %s)\n", expectedToken, token_name(expectedToken));
-    #endif
+#endif
     if (lookahead == expectedToken)
         lookahead = yylex();
     else {
@@ -87,7 +87,7 @@ void parse()
     printf("value is %d\n", value);
 }
 
-int elective() // an expression is a sequence of terms seperated by ADDOPs
+int expression() // an expression is a sequence of terms seperated by ADDOPs
 {
     int value = term();
     while (lookahead == ADDOP) {
@@ -143,7 +143,8 @@ int p()
     RETURN("p", value);    
 }
 
-int main (int argc, char **argv)
+int
+main (int argc, char **argv)
 {
     extern FILE *yyin;
     if (argc != 2) {
@@ -168,6 +169,12 @@ void errorMsg(const char *s)
   fprintf (stderr, "line %d: %s\n", yylineno, s);
 }
 
+int power(int base, unsigned int exp) {
+    int i, result = 1;
+    for (i = 0; i < exp; i++)
+        result *= base;
+    return result;
+}
 
 
 
