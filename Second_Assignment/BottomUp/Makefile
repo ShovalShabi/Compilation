@@ -1,17 +1,18 @@
-objects = coursesexp.o lex.yy.o  
+objects = bisongen lex.yy.o
+initiatedC = lex.yy.c grammar.tab.c
+initiatedH = grammar.tab.h
 
-coursesexp.exe: $(objects)
-	gcc -o coursesexp.exe $(objects)
+bottomup.exe: $(objects)
+	gcc $(initiatedC) -o coursesexp.exe
 
-
-lex.yy.o : lex.yy.c coursesexp.h
+lex.yy.o : lex.yy.c
 	gcc -c lex.yy.c
-
-coursesexp.o : coursesexp.c coursesexp.h 
-	gcc -c coursesexp.c
 	
 lex.yy.c : mylex.lex
 	flex mylex.lex
+
+bisongen:
+	bison -d grammar.y
 	
 clean :
-	rm $(objects) coursesexp.exe *.yy.c
+	rm $(objects) $(initiatedC) $(initiatedH)
