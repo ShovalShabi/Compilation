@@ -26,14 +26,17 @@ struct Course courses[2000] = {0};
 /* note: no semicolon after the union */
 %union {
   char lexeme[100];
-  double credits;
   struct Course* myCourse;
+  double credits;
+  int integer;
 }
 
-%token COURSES NUM NAME CREDITS DEGREE SCHOOL ELECTIVE
+%token<lexeme> COURSES NAME DEGREE SCHOOL ELECTIVE
+%token<credits> CREDITS
+%token<integer> NUM
 
 %type <myCourse> course_list course
-%type <int> elective;
+%type <integer> elective;
 
 
 %define parse.error verbose
@@ -97,8 +100,8 @@ main (int argc, char **argv)
 
 void yyerror (const char *s)
 {
-  extern int line;
-  fprintf (stderr, "line %d: %s\n", line, s);
+  extern int yylineno;
+  fprintf (stderr, "line %d: %s\n", yylineno, s);
 }
 
 
