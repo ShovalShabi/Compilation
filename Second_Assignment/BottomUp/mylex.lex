@@ -16,7 +16,7 @@ extern double atof(const char*);
 
 \".*\"                  { strcpy(yylval.lexeme, yytext); return NAME; }
 
-[0-5](\.[0-9])?|6        { yylval.credits = atof(yytext); strcpy(yylval.lexeme, yytext); return CREDITS; }
+[0-5](\.[0-9]?[0-9])?|6        { yylval.credits = atof(yytext); strcpy(yylval.lexeme, yytext); return CREDITS; }
 
 [B|M]\.Sc\.        { strcpy(yylval.lexeme, yytext); return DEGREE; }
 

@@ -1,9 +1,10 @@
 objects = bisongen lex.yy.o
 initiatedC = lex.yy.c grammar.tab.c
 initiatedH = grammar.tab.h
+exec = coursesexp.exe
 
 bottomup.exe: $(objects)
-	gcc $(initiatedC) -o coursesexp.exe
+	gcc $(initiatedC) -o $(exec)
 
 lex.yy.o : lex.yy.c
 	gcc -c lex.yy.c
@@ -15,4 +16,4 @@ bisongen:
 	bison -d grammar.y
 	
 clean :
-	rm $(objects) $(initiatedC) $(initiatedH)
+	rm $(objects) $(initiatedC) $(initiatedH) $(exec)
