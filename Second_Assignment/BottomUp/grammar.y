@@ -3,20 +3,21 @@
 #include <stdio.h>
 #include <string.h>
 
-/* yylex () and yyerror() need to be declared here */
+/* Declarations for external functions yylex () and yyerror() */
 extern int yylex (void);
 void yyerror (const char *s);
 
+// Variables to keep track of course data
 int numCourses = 0;
 struct Course courses[2000] = {0};
 double totalElectiveCred = 0;
 int electiveCounter = 0;
 int countAboveThreeCred = 0;
-
 }
 
 
 %code requires {
+    // Definition of the Course structure
     struct Course {
     char name[100];
     int num;
@@ -27,30 +28,32 @@ int countAboveThreeCred = 0;
   };
 }
 
-/* note: no semicolon after the union */
+/* Union to handle different token types */
 %union {
   char lexeme[100];
-  struct Course myCourse;
-  double credits;
-  int integer;
+  struct Course myCourse;  // Course information
+  double credits;         // Credits value
+  int integer;            // Integer value
 }
 
+// Token definitions with associated types
 %token<lexeme> COURSES NAME DEGREE SCHOOL ELECTIVE
 %token<credits> CREDITS
 %token<integer> NUM
 
+// Declaration of types for non-terminals
 %type <myCourse> course_list course
 %type <integer> elective;
-
 
 %define parse.error verbose
 
 %%
 
+// Start rule for the parser
 input: COURSES course_list {
-    // Print the number of elective courses that found
+    // Print the number of elective courses found
     if (electiveCounter){
-      printf("There are %d elecive courses\n", electiveCounter);
+      printf("There are %d elective courses\n", electiveCounter);
       printf("\nThe total number of credits of the elective courses is %.2f\n", totalElectiveCred);
       if(countAboveThreeCred){
         printf("\nThe elective courses with 3 credits or more are:\n");
@@ -66,16 +69,15 @@ input: COURSES course_list {
       
     }
     else
-      printf("There are no elecive courses in this file!\n");
-
-
+      printf("There are no elective courses in this file!\n");
 };
 
+// Rule to handle lists of courses
 course_list: course_list course;
 course_list: %empty {};
 
+// Rule to handle individual courses
 course: NUM NAME CREDITS DEGREE SCHOOL elective {
-    // Store the course information within the current struct the array
     $$.num = $1;
     strcpy($$.name, $2);
     $$.credits = $3;
@@ -88,17 +90,17 @@ course: NUM NAME CREDITS DEGREE SCHOOL elective {
         countAboveThreeCred++;
       electiveCounter++;
     }
-    courses[numCourses] = $$; // Dereference the pointer and store it in the array
+    courses[numCourses] = $$; // Store the course in the array
     numCourses++;
 };
 
+// Rule to handle the ELECTIVE token
 elective: ELECTIVE { $$ = 1; } | %empty { $$ = 0; };
 
 %%
 
-
-int
-main (int argc, char **argv)
+// Main function to start the parser
+int main (int argc, char **argv)
 {
   extern FILE *yyin;
   if (argc != 2) {
@@ -111,19 +113,16 @@ main (int argc, char **argv)
 	   return 2;
   }
   
-  yyparse ();
+  yyparse ();  // Start the parsing process
   
   fclose (yyin);
   return 0;
 }
 
+// Error handling function
 void yyerror (const char *s)
 {
   extern int yylineno;
   fprintf (stderr, "line %d: %s\n", yylineno, s);
 }
-
-
-
-
 
